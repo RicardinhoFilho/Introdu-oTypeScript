@@ -7,6 +7,6 @@ class Negociacoes {
         this._negociacoes.push(negociacao);
     }
     ParaArray() {
-        return this._negociacoes;
+        return [].concat(this._negociacoes); //retornamos uma cópia de nosso array, o tornando imútavel
     }
 }
