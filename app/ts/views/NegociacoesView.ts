@@ -1,4 +1,7 @@
-class NegociacoesView extends View<Negociacoes> {
+import{View} from "./View"
+import{Negociacoes} from "../models/Negociacoes"
+
+export class NegociacoesView extends View<Negociacoes> {
 
 
 
@@ -18,7 +21,7 @@ class NegociacoesView extends View<Negociacoes> {
 
         <tbody>
         
-            ${model.ParaArray().map(negociacao => 
+            ${model.ParaArray().map(negociacao =>
             `
                     
                 <tr>

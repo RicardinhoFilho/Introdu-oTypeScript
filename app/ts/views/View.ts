@@ -1,5 +1,6 @@
-abstract class View<T>{
-   
+
+export abstract class View<T>{
+
     protected _elemento: JQuery;
 
     constructor(seletor: string) {
@@ -9,9 +10,9 @@ abstract class View<T>{
 
     update(model: T) {
 
-        this._elemento.html(this.template(model)); 
+        this._elemento.html(this.template(model));
 
     }
 
-    abstract template(model:T):string;//Não possui implemetação e é abstract para obrigarmos quem herdar esta classe a implementa-la
+    abstract template(model: T): string;//Não possui implemetação e é abstract para obrigarmos quem herdar esta classe a implementa-la
 }
