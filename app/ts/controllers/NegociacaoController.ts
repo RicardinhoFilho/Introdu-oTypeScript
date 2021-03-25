@@ -29,8 +29,17 @@ export class NegociacaoController {
 
         event.preventDefault();
 
+        let data = new Date(this._inputData.val().replace(/-/g, ','));
+
+        //bloquear transações feitas no domingo e no sábado
+        if (this._VerificaDiaUtil(data)) {
+            
+            this._mensagemView.update("<p class='alert alert-danger'>Não é permitido negociações fora de dia úteis</p>");
+            return;
+        }
+
         const negociacao = new Negociacao(
-            new Date(this._inputData.val().replace(/-/g, ',')),
+            data,
             parseInt(this._inputQuantidade.val()),
             parseFloat(this._inputValor.val()));
 
@@ -52,9 +61,27 @@ export class NegociacaoController {
 
 
         this._negociacoesView.update(this._negociacoes);
-        this._mensagemView.update("Negociação Adicionada com sucesso");
+        this._mensagemView.update("<p class='alert alert-info'>Negociação Adicionada com sucesso</p>");
 
     }
 
+    //domingo -> getDay() == 0
+    //sabado -> getDay() == 6
+    private _VerificaDiaUtil(data: Date) {
 
+        return data.getDay() == DiaDaSemana.Sabado || data.getDay() == DiaDaSemana.Domingo;
+    }
+
+
+}
+
+enum DiaDaSemana {
+
+    Domingo,
+    Segunda,
+    Terca,
+    Quarta,
+    Quinta,
+    Sexta,
+    Sabado
 }

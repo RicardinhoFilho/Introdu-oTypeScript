@@ -12,7 +12,7 @@ export class Negociacoes {
 
     ParaArray():Negociacao[] {
 
-        return  [].concat(this._negociacoes);//retornamos uma cópia de nosso array, o tornando imútavel
+        return  ([] as Negociacao[]).concat(this._negociacoes);//retornamos uma cópia de nosso array, o tornando imútavel
 
     }
 }
