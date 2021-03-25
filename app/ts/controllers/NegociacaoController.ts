@@ -1,3 +1,5 @@
+import { logarTempoDeExecucao } from "../helpers/decorators/index";
+
 import { NegociacoesView, MensagemView } from '../views/index';
 import { Negociacao, Negociacoes } from '../models/index';
 
@@ -25,7 +27,10 @@ export class NegociacaoController {
         this._negociacoesView.update(this._negociacoes);
     }
 
+    @logarTempoDeExecucao()
     Adiciona(event: Event): void {
+
+        let t1= performance.now();
 
         event.preventDefault();
 
@@ -63,6 +68,9 @@ export class NegociacaoController {
         this._negociacoesView.update(this._negociacoes);
         this._mensagemView.update("<p class='alert alert-info'>Negociação Adicionada com sucesso</p>");
 
+        let t2 = performance.now();
+
+        console.log(`Tempo de execução -> ${t2 - t1}ms`);
     }
 
     //domingo -> getDay() == 0
@@ -72,6 +80,7 @@ export class NegociacaoController {
         return data.getDay() == DiaDaSemana.Sabado || data.getDay() == DiaDaSemana.Domingo;
     }
 
+    
 
 }
 
