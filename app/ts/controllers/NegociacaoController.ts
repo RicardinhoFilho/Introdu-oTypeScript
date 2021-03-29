@@ -1,7 +1,7 @@
 import { logarTempoDeExecucao, domInject, throttle } from "../helpers/decorators/index";
 import { NegociacoesView, MensagemView } from '../views/index';
 import { Negociacao, Negociacoes, NegociacaoParcial } from '../models/index';
-import { NegociacaoService } from '../services/NegociacaoServices'
+import { NegociacaoService, HandlerFunction } from '../services/NegociacaoServices'
 
 
 // import{ Negociacao } from "../models/Negociacao";
@@ -87,14 +87,13 @@ export class NegociacaoController {
 
         return data.getDay() == DiaDaSemana.Sabado || data.getDay() == DiaDaSemana.Domingo;
     }
-    @throttle()
+    @throttle()//só permite buscar transações em um intervalo de3 500ms
     //função consumindo dados de nossa api
     importaDados() {
         //alert("Deu Certo!");
-
-        function isOk(res: Response) {
+        function isOk(res: Response) {//recebe ResponseType
             if (res.ok) {
-                return res;
+                return res;//retorna Response
             } else {
                 throw new Error(res.statusText);
             }
