@@ -9,7 +9,10 @@ export class NegociacaoService {
             .then((res) => handler(res))//recebe checagem de possível erro(404 por exemplo)
             .then((res) => res.json())//converte para objetos json
             .then((dados: NegociacaoParcial[]) => dados.map((dado) => new Negociacao(new Date(), dado.vezes, dado.montante)))//mapeia objetos json para uma Negociacao
-            .catch((err) => console.log(err.message));//caso ocorra o erro ele é descrito em nosso console
+            .catch((err) => {
+                console.log(err);
+                throw new Error("Não foi possível importar as negociações!");
+            });//caso ocorra o erro ele é descrito em nosso console
     }
 }
 

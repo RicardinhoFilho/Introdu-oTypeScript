@@ -15,6 +15,15 @@ System.register([], function (exports_1, context_1) {
                 ParaArray() {
                     return [].concat(this._negociacoes);
                 }
+                ParaTexto() {
+                    console.log(JSON.stringify(this._negociacoes));
+                }
+                ehIgual(negociacoes) {
+                    return JSON.stringify(this._negociacoes) == JSON.stringify(negociacoes.ParaArray);
+                }
+                paraTexto() {
+                    console.log(JSON.stringify(this._negociacoes));
+                }
             };
             exports_1("Negociacoes", Negociacoes);
         }

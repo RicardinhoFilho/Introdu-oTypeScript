@@ -1,4 +1,4 @@
-System.register(["../helpers/decorators/index", "../views/index", "../models/index", "../services/NegociacaoServices"], function (exports_1, context_1) {
+System.register(["../helpers/decorators/index", "../views/index", "../models/index", "../services/NegociacaoServices", "../helpers/index"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -7,7 +7,7 @@ System.register(["../helpers/decorators/index", "../views/index", "../models/ind
         return c > 3 && r && Object.defineProperty(target, key, r), r;
     };
     var __moduleName = context_1 && context_1.id;
-    var index_1, index_2, index_3, NegociacaoServices_1, NegociacaoController, DiaDaSemana;
+    var index_1, index_2, index_3, NegociacaoServices_1, index_4, NegociacaoController, DiaDaSemana;
     return {
         setters: [
             function (index_1_1) {
@@ -21,6 +21,9 @@ System.register(["../helpers/decorators/index", "../views/index", "../models/ind
             },
             function (NegociacaoServices_1_1) {
                 NegociacaoServices_1 = NegociacaoServices_1_1;
+            },
+            function (index_4_1) {
+                index_4 = index_4_1;
             }
         ],
         execute: function () {
@@ -43,14 +46,8 @@ System.register(["../helpers/decorators/index", "../views/index", "../models/ind
                         return;
                     }
                     const negociacao = new index_3.Negociacao(data, parseInt(this._inputQuantidade.val()), parseFloat(this._inputValor.val()));
+                    index_4.Imprime(negociacao);
                     this._negociacoes.Adiciona(negociacao);
-                    this._negociacoes.ParaArray().length = 0;
-                    this._negociacoes.ParaArray().forEach(negociacao => {
-                        console.log(negociacao.data);
-                        console.log(negociacao.quantidade);
-                        console.log(negociacao.valor);
-                        console.log(negociacao.volume);
-                    });
                     this._negociacoesView.update(this._negociacoes);
                     this._mensagemView.update("<p class='alert alert-info'>Negociação Adicionada com sucesso</p>");
                 }
@@ -67,9 +64,14 @@ System.register(["../helpers/decorators/index", "../views/index", "../models/ind
                         }
                     }
                     this._negociacaoService.obterNegociacoes(isOk)
-                        .then(negociacoes => {
-                        negociacoes.forEach(negociacao => this._negociacoes.Adiciona(negociacao));
+                        .then(negociacoesParaImportar => {
+                        const negociacoesJaImportadas = this._negociacoes.ParaArray();
+                        negociacoesParaImportar
+                            .filter(negociacao => !negociacoesJaImportadas.some(jaImportada => negociacao.ehIgual(negociacao)))
+                            .forEach(negociacao => this._negociacoes.Adiciona(negociacao));
                         this._negociacoesView.update(this._negociacoes);
+                    }).catch(err => {
+                        this._mensagemView.update(err.message);
                     });
                 }
             };

@@ -2,12 +2,7 @@ import { logarTempoDeExecucao, domInject, throttle } from "../helpers/decorators
 import { NegociacoesView, MensagemView } from '../views/index';
 import { Negociacao, Negociacoes, NegociacaoParcial } from '../models/index';
 import { NegociacaoService, HandlerFunction } from '../services/NegociacaoServices'
-
-
-// import{ Negociacao } from "../models/Negociacao";
-// import { Negociacoes } from "../models/Negociacoes";
-// import { MensagemView } from "../views/MensagemView";
-// import { NegociacoesView } from "../views/NegociacoesView";
+import { Imprime } from '../helpers/index'
 
 export class NegociacaoController {
 
@@ -57,28 +52,11 @@ export class NegociacaoController {
             parseInt(this._inputQuantidade.val()),
             parseFloat(this._inputValor.val()));
 
+        Imprime(negociacao)
 
-        // console.log(negociacao);
         this._negociacoes.Adiciona(negociacao);
-
-        this._negociacoes.ParaArray().length = 0;//estamos tentando excluir nosso aray, entretanto ele está imutavél
-
-        this._negociacoes.ParaArray().forEach(negociacao => {
-
-            console.log(negociacao.data);
-            console.log(negociacao.quantidade);
-            console.log(negociacao.valor);
-            console.log(negociacao.volume);
-
-
-        })
-
-
         this._negociacoesView.update(this._negociacoes);
         this._mensagemView.update("<p class='alert alert-info'>Negociação Adicionada com sucesso</p>");
-
-
-        // console.log(`Tempo de execução -> ${t2 - t1}ms`);
     }
 
     //domingo -> getDay() == 0
@@ -100,11 +78,19 @@ export class NegociacaoController {
         }
 
         this._negociacaoService.obterNegociacoes(isOk)
-            .then(negociacoes => {
-                negociacoes.forEach(negociacao =>
-                    this._negociacoes.Adiciona(negociacao));
+            .then(negociacoesParaImportar => {
+
+                const negociacoesJaImportadas = this._negociacoes.ParaArray();
+
+                negociacoesParaImportar
+                    .filter(negociacao =>
+                        !negociacoesJaImportadas.some(jaImportada => negociacao.ehIgual(negociacao)))//recebemos como retorno se a negociacão já foi importada, caso isso tenha orcorrido, com "!" invertemos o resultado do filtro 
+                    .forEach(negociacao =>
+                        this._negociacoes.Adiciona(negociacao));
                 this._negociacoesView.update(this._negociacoes)
-            });
+            }).catch(err => {
+                this._mensagemView.update(err.message);
+            })
 
 
 
