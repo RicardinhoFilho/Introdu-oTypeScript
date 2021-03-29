@@ -9,7 +9,7 @@ export function logarTempoDeExecucao(emSegundos: boolean = false) {
             let uniodade = "ms";
             let divisor = 1;
 
-            if(emSegundos){
+            if (emSegundos) {
 
                 uniodade = "s";
                 divisor = 1000;
@@ -24,8 +24,8 @@ export function logarTempoDeExecucao(emSegundos: boolean = false) {
             const retorno = metodoOriginal.apply(this, args);
 
             const t2 = performance.now();
-            console.log(`O retorno do método ${propertyKey} é ${JSON.stringify(retorno)}`)
-            console.log(`O método ${propertyKey} demorou ${(t2 - t1)/divisor}${uniodade}`);
+            //console.log(`O retorno do método ${propertyKey} é ${JSON.stringify(retorno)}`)
+            console.log(`O método ${propertyKey} demorou ${(t2 - t1) / divisor}${uniodade}`);
 
             return retorno;
         }

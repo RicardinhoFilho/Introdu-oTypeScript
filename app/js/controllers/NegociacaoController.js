@@ -32,7 +32,6 @@ System.register(["../helpers/decorators/index", "../views/index", "../models/ind
                     this._negociacoesView.update(this._negociacoes);
                 }
                 Adiciona(event) {
-                    let t1 = performance.now();
                     event.preventDefault();
                     let data = new Date(this._inputData.val().replace(/-/g, ','));
                     if (this._VerificaDiaUtil(data)) {
@@ -50,11 +49,28 @@ System.register(["../helpers/decorators/index", "../views/index", "../models/ind
                     });
                     this._negociacoesView.update(this._negociacoes);
                     this._mensagemView.update("<p class='alert alert-info'>Negociação Adicionada com sucesso</p>");
-                    let t2 = performance.now();
-                    console.log(`Tempo de execução -> ${t2 - t1}ms`);
                 }
                 _VerificaDiaUtil(data) {
                     return data.getDay() == DiaDaSemana.Sabado || data.getDay() == DiaDaSemana.Domingo;
+                }
+                importaDados() {
+                    function isOk(res) {
+                        if (res.ok) {
+                            return res;
+                        }
+                        else {
+                            throw new Error(res.statusText);
+                        }
+                    }
+                    fetch('http://localhost:8080/dados')
+                        .then(res => isOk(res))
+                        .then(res => res.json())
+                        .then((dados) => {
+                        dados.map(dado => new index_3.Negociacao(new Date(), dado.vezes, dado.montante))
+                            .forEach(negociacao => this._negociacoes.Adiciona(negociacao));
+                        this._negociacoesView.update(this._negociacoes);
+                    })
+                        .catch(err => console.log(err));
                 }
             };
             __decorate([

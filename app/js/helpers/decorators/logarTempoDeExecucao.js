@@ -16,7 +16,6 @@ System.register([], function (exports_1, context_1) {
                 const t1 = performance.now();
                 const retorno = metodoOriginal.apply(this, args);
                 const t2 = performance.now();
-                console.log(`O retorno do método ${propertyKey} é ${JSON.stringify(retorno)}`);
                 console.log(`O método ${propertyKey} demorou ${(t2 - t1) / divisor}${uniodade}`);
                 return retorno;
             };

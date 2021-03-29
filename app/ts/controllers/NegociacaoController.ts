@@ -1,7 +1,8 @@
-import { logarTempoDeExecucao } from "../helpers/decorators/index";
-
+import { logarTempoDeExecucao, domInject } from "../helpers/decorators/index";
 import { NegociacoesView, MensagemView } from '../views/index';
 import { Negociacao, Negociacoes } from '../models/index';
+import { error } from "jquery";
+
 
 // import{ Negociacao } from "../models/Negociacao";
 // import { Negociacoes } from "../models/Negociacoes";
@@ -9,6 +10,13 @@ import { Negociacao, Negociacoes } from '../models/index';
 // import { NegociacoesView } from "../views/NegociacoesView";
 
 export class NegociacaoController {
+
+    //  @domInject("#data")
+    //  private _inpuData: JQuery;
+    //  @domInject("#quantidade")
+    //  private _inpuQuantidade: JQuery;
+    //  @domInject("#valor")
+    //  private _inpuValor: JQuery
 
     private _inputData: JQuery;
     private _inputQuantidade: JQuery;
@@ -30,7 +38,6 @@ export class NegociacaoController {
     @logarTempoDeExecucao()
     Adiciona(event: Event): void {
 
-        let t1= performance.now();
 
         event.preventDefault();
 
@@ -38,7 +45,7 @@ export class NegociacaoController {
 
         //bloquear transações feitas no domingo e no sábado
         if (this._VerificaDiaUtil(data)) {
-            
+
             this._mensagemView.update("<p class='alert alert-danger'>Não é permitido negociações fora de dia úteis</p>");
             return;
         }
@@ -68,9 +75,8 @@ export class NegociacaoController {
         this._negociacoesView.update(this._negociacoes);
         this._mensagemView.update("<p class='alert alert-info'>Negociação Adicionada com sucesso</p>");
 
-        let t2 = performance.now();
 
-        console.log(`Tempo de execução -> ${t2 - t1}ms`);
+        // console.log(`Tempo de execução -> ${t2 - t1}ms`);
     }
 
     //domingo -> getDay() == 0
@@ -80,7 +86,28 @@ export class NegociacaoController {
         return data.getDay() == DiaDaSemana.Sabado || data.getDay() == DiaDaSemana.Domingo;
     }
 
-    
+    //função consumindo dados de nossa api
+    importaDados() {
+        //alert("Deu Certo!");
+
+        function isOk(res: Response) {
+            if (res.ok) {
+                return res;
+            } else {
+                throw new Error(res.statusText);
+            }
+        }
+
+        fetch('http://localhost:8080/dados')
+            .then(res => isOk(res))
+            .then(res => res.json())
+            .then((dados: any[]) => {
+                dados.map(dado => new Negociacao(new Date(), dado.vezes, dado.montante))
+                    .forEach(negociacao => this._negociacoes.Adiciona(negociacao))
+                    this._negociacoesView.update(this._negociacoes);
+            })
+            .catch(err => console.log(err));
+    }
 
 }
 
