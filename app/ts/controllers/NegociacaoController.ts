@@ -67,30 +67,38 @@ export class NegociacaoController {
     }
     @throttle()//só permite buscar transações em um intervalo de3 500ms
     //função consumindo dados de nossa api
-    importaDados() {
-        //alert("Deu Certo!");
-        function isOk(res: Response) {//recebe ResponseType
-            if (res.ok) {
-                return res;//retorna Response
-            } else {
-                throw new Error(res.statusText);
+    async importaDados() {
+
+        try {
+            //alert("Deu Certo!");
+            function isOk(res: Response) {//recebe ResponseType
+                if (res.ok) {
+                    return res;//retorna Response
+                } else {
+                    throw new Error(res.statusText);
+                }
             }
+
+            const negociacoesParaImportar = await this._negociacaoService.obterNegociacoes(isOk)
+                .then(negociacoesParaImportar => {
+
+                    const negociacoesJaImportadas = this._negociacoes.ParaArray();
+
+                    negociacoesParaImportar
+                        .filter(negociacao =>
+                            !negociacoesJaImportadas.some(jaImportada => negociacao.ehIgual(negociacao)))//recebemos como retorno se a negociacão já foi importada, caso isso tenha orcorrido, com "!" invertemos o resultado do filtro 
+                        .forEach(negociacao =>
+                            this._negociacoes.Adiciona(negociacao));
+                    this._negociacoesView.update(this._negociacoes)
+                }).catch(err => {
+                    this._mensagemView.update(err.message);
+                })
+        } catch(error) {
+
+            this._mensagemView.update(`<p class='alert alert-danger'>${error}</p>`);
+
         }
 
-        this._negociacaoService.obterNegociacoes(isOk)
-            .then(negociacoesParaImportar => {
-
-                const negociacoesJaImportadas = this._negociacoes.ParaArray();
-
-                negociacoesParaImportar
-                    .filter(negociacao =>
-                        !negociacoesJaImportadas.some(jaImportada => negociacao.ehIgual(negociacao)))//recebemos como retorno se a negociacão já foi importada, caso isso tenha orcorrido, com "!" invertemos o resultado do filtro 
-                    .forEach(negociacao =>
-                        this._negociacoes.Adiciona(negociacao));
-                this._negociacoesView.update(this._negociacoes)
-            }).catch(err => {
-                this._mensagemView.update(err.message);
-            })
 
 
 
